@@ -407,9 +407,11 @@ def MLRFCN_Model(img_height_size, img_width_size, n_bands, gf, initial_conv_filt
     stage_4_upsam = UpSampling2D(size = (32, 32), interpolation = 'bilinear')(stage_4_conv)
     
     
-    mask_output = Add()([stage_2_upsam, stage_3_upsam, stage_4_upsam])
-    edge_output = Add()([stage_2_upsam, stage_3_upsam, stage_4_upsam])
+    mask_output_inter = Add()([stage_2_upsam, stage_3_upsam, stage_4_upsam])
+    mask_output = Conv2D(1, (1, 1), padding = 'same', activation = 'sigmoid', name = 'mask')(mask_output_inter)
     
+    edge_output_inter = Add()([stage_2_upsam, stage_3_upsam, stage_4_upsam])
+    edge_output = Conv2D(1, (1, 1), padding = 'same', activation = 'sigmoid', name = 'edge')(edge_output_inter)
     
     
     mlrfcn_model = Model(inputs = img_input, outputs = [mask_output, edge_output])
